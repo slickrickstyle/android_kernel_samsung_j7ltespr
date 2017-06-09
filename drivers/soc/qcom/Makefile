@@ -44,6 +44,7 @@ obj-$(CONFIG_MEM_SHARE_QMI_SERVICE)		+= memshare/
 obj-$(CONFIG_MSM_SPM) += spm.o spm_devices.o
 obj-y		+= socinfo.o
 
+
 obj-$(CONFIG_MSM_HVC) += hvc.o
 obj-$(CONFIG_MSM_HYP_DEBUG) += hyp-debug.o
 
@@ -81,5 +82,6 @@ obj-$(CONFIG_QCOM_EARLY_RANDOM)	+= early_random.o
 obj-$(CONFIG_MSM_PACMAN)        += msm_pacman.o
 obj-$(CONFIG_STATE_NOTIFIER)		+= state_notifier.o
 obj-$(CONFIG_STATE_HELPER)		+= state_helper.o
+obj-$(CONFIG_FORCE_FAST_CHARGE) += fastchg.o
 
 obj-y		+= samsung/
