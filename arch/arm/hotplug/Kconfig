@@ -22,6 +22,36 @@ config THUNDERPLUG_CONTROL
  	    help
  	       This driver uses powersuspend to take down the cpu cores on a octa core device.
 
+config BRICKED_HOTPLUG
+	bool "Enable kernel based mpdecision"
+	depends on MSM_RUN_QUEUE_STATS
+	default n
+	help
+	 This enables kernel based multi core control.
+	 (up/down hotplug based on load)
+	 
+config INTELLI_PLUG
+	   bool "Hotplug for Razor Reborn"
+	   depends on MSM_RUN_QUEUE_STATS
+	   default y
+	   help
+		 This enables kernel based multi core control. Best Choice for Razor Reborn
+		 
+config MSM_HOTPLUG
+	   config MSM_HOTPLUG
+	bool "MSM hotplug driver"
+	depends on HOTPLUG_CPU
+	default n
+	help
+	  The MSM hotplug driver controls on-/offlining of additional cores based
+	  on current cpu load.
+	  
+config MSM_SLEEPER
+    bool "CPU hotplug driver"
+ 	default y
+ 	help
+	  CPU hotplug driver
+	  
 config STATE_HELPER
         tristate "State Helper"
         default n

@@ -43,13 +43,14 @@ ifeq ($(CONFIG_ARCH_MSM8929),y)
 
 ifeq ($(CONFIG_MACH_J7_USA_SPR),y)
 	dtb-y += msm8929-sec-j7-spr-r00.dtb
-endif
-
-endif
-
+	
 ifeq ($(CONFIG_SPEEDFORCE_DTB),y)
 # J7
 	dtb-y += msm8929-SPEEDFORCE.dtb
+endif
+
+endif
+
 endif
 
 dtb-$(CONFIG_ARCH_MSM8226) += msm8226-sim.dtb \
