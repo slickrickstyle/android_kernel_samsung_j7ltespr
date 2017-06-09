@@ -24,7 +24,7 @@
 #include <linux/cpufreq.h>
 #include <linux/msm_bcl.h>
 
-#if defined(CONFIG_MMI_MERLIN_DTB) || defined(CONFIG_MMI_LUX_DTB)
+#if defined(CONFIG_MACH_J7_USA_SPR)
 static int suspend_cpu_num = 2, resume_cpu_num = 7;
 static int device_cpus = 8;
 static int core_limit = 8;
@@ -66,7 +66,7 @@ static struct delayed_work tplug_boost;
 static struct workqueue_struct *tplug_resume_wq;
 static struct delayed_work tplug_resume_work;
 
-#if defined(CONFIG_MMI_MERLIN_DTB) || defined(CONFIG_MMI_LUX_DTB)
+#if defined(CONFIG_MACH_J7_USA_SPR)
 static unsigned int last_load[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 #else
 static unsigned int last_load[4] = {0, 0, 0, 0};
@@ -89,7 +89,7 @@ static inline void offline_cpus(void)
 	unsigned int cpu;
 	switch(endurance_level) {
 		case 1: /* QuadCore mode */
-#if defined(CONFIG_MMI_MERLIN_DTB) || defined(CONFIG_MMI_LUX_DTB)
+#if defined(CONFIG_MACH_J7_USA_SPR)
 			if(suspend_cpu_num > 4)
 				suspend_cpu_num = 4;
 		break;
@@ -113,7 +113,7 @@ static inline void cpus_online_all(void)
 	unsigned int cpu;
 	switch(endurance_level) {
 	case 1: /* QuadCore mode */
-#if defined(CONFIG_MMI_MERLIN_DTB) || defined(CONFIG_MMI_LUX_DTB)
+#if defined(CONFIG_MACH_J7_USA_SPR)
 		if(resume_cpu_num > 3 || resume_cpu_num == 1)
 			resume_cpu_num = 3;
 	break;
@@ -123,7 +123,7 @@ static inline void cpus_online_all(void)
 			resume_cpu_num = 1;
 	break;
 	case 0: /* Default mode */
-#if defined(CONFIG_MMI_MERLIN_DTB) || defined(CONFIG_MMI_LUX_DTB)
+#if defined(CONFIG_MACH_J7_USA_SPR)
 		if(resume_cpu_num < 7)
 			resume_cpu_num = 7;
 #else
@@ -398,14 +398,14 @@ static void __cpuinit tplug_work_fn(struct work_struct *work)
 	switch(endurance_level)
 	{
 	case 0: /* Default mode */
-#if defined(CONFIG_MMI_MERLIN_DTB) || defined(CONFIG_MMI_LUX_DTB)
+#if defined(CONFIG_MACH_J7_USA_SPR)
 		core_limit = 8;
 #else
 		core_limit = 4;
 #endif
 	break;
 	case 1: /* QuadCore mode */
-#if defined(CONFIG_MMI_MERLIN_DTB) || defined(CONFIG_MMI_LUX_DTB)
+#if defined(CONFIG_MACH_J7_USA_SPR)
 		core_limit = 4;
 	break;
 #endif
@@ -413,7 +413,7 @@ static void __cpuinit tplug_work_fn(struct work_struct *work)
 		core_limit = 2;
 	break;
 	default:
-#if defined(CONFIG_MMI_MERLIN_DTB) || defined(CONFIG_MMI_LUX_DTB)
+#if defined(CONFIG_MACH_J7_USA_SPR)
 		core_limit = 8;
 #else
 		core_limit = 4;
