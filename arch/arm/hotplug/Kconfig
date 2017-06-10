@@ -33,7 +33,7 @@ config BRICKED_HOTPLUG
 config INTELLI_PLUG
 	   bool "Hotplug for Razor Reborn"
 	   depends on MSM_RUN_QUEUE_STATS
-	   default y
+	   default n
 	   help
 		 This enables kernel based multi core control. Best Choice for Razor Reborn
 		 
@@ -48,7 +48,7 @@ config MSM_HOTPLUG
 	  
 config MSM_SLEEPER
     bool "CPU hotplug driver"
- 	default y
+ 	default n
  	help
 	  CPU hotplug driver
 	  
