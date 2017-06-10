@@ -160,6 +160,12 @@ config CPU_FREQ_DEFAULT_GOV_ELEMENTALX
 	help
 	  Use the CPUFreq governor 'elementalx' as default.
 
+config CPU_FREQ_DEFAULT_GOV_BIOSHOCK
+	bool "BioShock"
+	select CPU_FREQ_GOV_BIOSHOCK
+	help
+	  Default governor of BioShock kernel
+
 config CPU_FREQ_DEFAULT_GOV_BLUACTIVE
 	bool "bluactive"
 	select CPU_FREQ_GOV_BLUACTIVE
@@ -177,6 +183,14 @@ config CPU_FREQ_DEFAULT_GOV_INTERACTIVE_PRO
 	select CPU_FREQ_GOV_INTERACTIVE_PRO
 	help
 	Use the CPUFreq governor 'interactive_pro' as default.
+
+config CPU_FREQ_DEFAULT_GOV_INTELLIDEMAND
+ 	bool "intellidemand"
+ 	select CPU_FREQ_GOV_INTELLIDEMAND
+
+config CPU_FREQ_DEFAULT_GOV_DARKNESS
+ 	bool "darkness"
+ 	select CPU_FREQ_GOV_DARKNESS
 
 endchoice
 
@@ -307,6 +321,12 @@ config CPU_FREQ_GOV_ZZMOOVE
 	  % frequency steps to get smooth up/downscaling dependant on CPU load.
 	  If in doubt, say N.
 
+config CPU_FREQ_GOV_BIOSHOCK
+	tristate "'bioshock' cpufreq bioshock"
+	depends on CPU_FREQ
+	help
+	  'bioshock' - More aggressive version of conservative
+
 config CPU_FREQ_GOV_SMARTMAX
   tristate "'smartmax' cpufreq policy governor"
   select CPU_FREQ_TABLE
@@ -358,6 +378,13 @@ config CPU_BOOST
 	  - Migration of important threads from one CPU to another.
 
 	  If in doubt, say N.
+
+config CPU_FREQ_GOV_INTELLIDEMAND
+ 	tristate "'intellidemand' cpufreq governor"
+ 	depends on CPU_FREQ
+
+config CPU_FREQ_GOV_DARKNESS
+	tristate "'darkness' cpufreq policy governor"
 
 config GENERIC_CPUFREQ_CPU0
 	tristate "Generic CPU0 cpufreq driver"

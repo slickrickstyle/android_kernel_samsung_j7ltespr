@@ -135,6 +135,7 @@ void cpufreq_sysfs_remove_file(const struct attribute *attr);
 unsigned int cpufreq_get(unsigned int cpu);
 unsigned int cpufreq_quick_get(unsigned int cpu);
 unsigned int cpufreq_quick_get_max(unsigned int cpu);
+unsigned int cpufreq_quick_get_util(unsigned int cpu);
 void disable_cpufreq(void);
 
 u64 get_cpu_idle_time(unsigned int cpu, u64 *wall, int io_busy);
@@ -209,6 +210,7 @@ int set_freq_limit(unsigned long id, unsigned int freq);
 
 #define CPUFREQ_RELATION_L 0  /* lowest frequency at or above target */
 #define CPUFREQ_RELATION_H 1  /* highest frequency below or at target */
+#define CPUFREQ_RELATION_C 2 /* closest frequency to target */
 
 struct freq_attr {
 	struct attribute attr;
@@ -501,6 +503,15 @@ extern struct cpufreq_governor cpufreq_gov_intelliactive;
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_INTERACTIVE_PRO)
 extern struct cpufreq_governor cpufreq_gov_interactive_pro;
 #define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_interactive_pro)
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_INTELLIDEMAND)
+extern struct cpufreq_governor cpufreq_gov_intellidemand;
+#define CPUFREQ_DEFAULT_GOVERNOR (&cpufreq_gov_intellidemand)
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_DARKNESS)
+extern struct cpufreq_governor cpufreq_gov_darkness;
+#define CPUFREQ_DEFAULT_GOVERNOR (&cpufreq_gov_darkness)
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_BIOSHOCK)
+extern struct cpufreq_governor cpufreq_gov_bioshock;
+#define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_bioshock)
 #endif
 
 /*********************************************************************
