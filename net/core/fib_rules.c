@@ -225,6 +225,7 @@ out:
 	return (rule->flags & FIB_RULE_INVERT) ? !ret : ret;
 }
 
+
 int fib_rules_lookup(struct fib_rules_ops *ops, struct flowi *fl,
 		     int flags, struct fib_lookup_arg *arg)
 {
@@ -629,7 +630,11 @@ static int fib_nl_fill_rule(struct sk_buff *skb, struct fib_rule *rule,
 	    ((rule->mark_mask || rule->mark) &&
 	     nla_put_u32(skb, FRA_FWMASK, rule->mark_mask)) ||
 	    (rule->target &&
-	     nla_put_u32(skb, FRA_GOTO, rule->target)))
+	     nla_put_u32(skb, FRA_GOTO, rule->target)) ||
+	    (uid_valid(rule->uid_start) &&
+	     nla_put_uid(skb, FRA_UID_START, rule->uid_start)) ||
+	    (uid_valid(rule->uid_end) &&
+	     nla_put_uid(skb, FRA_UID_END, rule->uid_end)))
 		goto nla_put_failure;
 
 	if (uid_valid(rule->uid_start))
@@ -663,7 +668,7 @@ static int dump_rules(struct sk_buff *skb, struct netlink_callback *cb,
 		err = fib_nl_fill_rule(skb, rule, NETLINK_CB(cb->skb).portid,
 				       cb->nlh->nlmsg_seq, RTM_NEWRULE,
 				       NLM_F_MULTI, ops);
-		if (err)
+		if (err < 0)
 			break;
 skip:
 		idx++;
