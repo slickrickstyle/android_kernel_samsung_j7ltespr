@@ -124,6 +124,23 @@ int af_alg_release(struct socket *sock)
 }
 EXPORT_SYMBOL_GPL(af_alg_release);
 
+void af_alg_release_parent(struct sock *sk)
+{
+	struct alg_sock *ask = alg_sk(sk);
+	bool last;
+
+	sk = ask->parent;
+	ask = alg_sk(sk);
+
+	lock_sock(sk);
+	last = !--ask->refcnt;
+	release_sock(sk);
+
+	if (last)
+		sock_put(sk);
+}
+EXPORT_SYMBOL_GPL(af_alg_release_parent);
+
 static int alg_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 {
 	struct sock *sk = sock->sk;
@@ -131,6 +148,7 @@ static int alg_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 	struct sockaddr_alg *sa = (void *)uaddr;
 	const struct af_alg_type *type;
 	void *private;
+	int err;
 
 	if (sock->state == SS_CONNECTED)
 		return -EINVAL;
@@ -156,16 +174,22 @@ static int alg_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 		return PTR_ERR(private);
 	}
 
+	err = -EBUSY;
 	lock_sock(sk);
+	if (ask->refcnt)
+		goto unlock;
 
 	swap(ask->type, type);
 	swap(ask->private, private);
 
+	err = 0;
+
+unlock:
 	release_sock(sk);
 
 	alg_do_release(type, private);
 
-	return 0;
+	return err;
 }
 
 static int alg_setkey(struct sock *sk, char __user *ukey,
@@ -198,11 +222,15 @@ static int alg_setsockopt(struct socket *sock, int level, int optname,
 	struct sock *sk = sock->sk;
 	struct alg_sock *ask = alg_sk(sk);
 	const struct af_alg_type *type;
-	int err = -ENOPROTOOPT;
+	int err = -EBUSY;
 
 	lock_sock(sk);
+	if (ask->refcnt)
+		goto unlock;
+
 	type = ask->type;
 
+	err = -ENOPROTOOPT;
 	if (level != SOL_ALG || !type)
 		goto unlock;
 
@@ -245,14 +273,13 @@ int af_alg_accept(struct sock *sk, struct socket *newsock)
 	sock_graft(sk2, newsock);
 
 	err = type->accept(ask->private, sk2);
-	if (err) {
-		sk_free(sk2);
+	if (err)
 		goto unlock;
-	}
 
 	sk2->sk_family = PF_ALG;
 
-	sock_hold(sk);
+	if (!ask->refcnt++)
+		sock_hold(sk);
 	alg_sk(sk2)->parent = sk;
 	alg_sk(sk2)->type = type;
 
