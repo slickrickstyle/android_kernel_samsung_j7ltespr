@@ -1064,25 +1064,6 @@ ENTRY(native_iret)
 	_ASM_EXTABLE(native_iret, bad_iret)
 #endif
 
-	.section .fixup,"ax"
-bad_iret:
-	/*
-	 * The iret traps when the %cs or %ss being restored is bogus.
-	 * We've lost the original trap vector and error code.
-	 * #GPF is the most likely one to get for an invalid selector.
-	 * So pretend we completed the iret and took the #GPF in user mode.
-	 *
-	 * We are now running with the kernel GS after exception recovery.
-	 * But error_entry expects us to have user GS to match the user %cs,
-	 * so swap back.
-	 */
-	pushq $0
-
-	SWAPGS
-	jmp general_protection
-
-	.previous
-
 	/* edi: workmask, edx: work */
 retint_careful:
 	CFI_RESTORE_STATE
@@ -1468,7 +1449,7 @@ apicinterrupt HYPERVISOR_CALLBACK_VECTOR \
 
 paranoidzeroentry_ist debug do_debug DEBUG_STACK
 paranoidzeroentry_ist int3 do_int3 DEBUG_STACK
-paranoiderrorentry stack_segment do_stack_segment
+errorentry stack_segment do_stack_segment
 #ifdef CONFIG_XEN
 zeroentry xen_debug do_debug
 zeroentry xen_int3 do_int3
@@ -1598,7 +1579,15 @@ error_kernelspace:
 bstep_iret:
 	/* Fix truncated RIP */
 	movq %rcx,RIP+8(%rsp)
-	jmp error_swapgs
+	/* fall through */
+
+error_bad_iret:
+	SWAPGS
+	mov %rsp,%rdi
+	call fixup_bad_iret
+	mov %rax,%rsp
+	decl %ebx	/* Return to usergs */
+	jmp error_sti
 	CFI_ENDPROC
 END(error_entry)
 
