@@ -1791,6 +1791,8 @@ static void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
 					SDHCI_CARD_PRESENT;
 	}
 
+	present = mmc_gpio_get_cd(host->mmc);
+
 	spin_lock_irqsave(&host->lock, flags);
 
 	WARN_ON(host->mrq != NULL);
@@ -1817,7 +1819,7 @@ static void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
 		host->mrq->cmd->error = -ENOMEDIUM;
 		tasklet_schedule(&host->finish_tasklet);
 	} else {
-		u32 present_state;
+u32 present_state;
 
 		present_state = sdhci_readl(host, SDHCI_PRESENT_STATE);
 		/*
